@@ -1,0 +1,230 @@
+
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sys/time.h>
+#include <iomanip>
+#define MAX 100000
+
+
+using namespace std;
+
+long long int i_cnt = 0;
+long long int r_cnt = 0;
+long long int m_cnt = 0;
+
+struct timeval startTime, stopTime;
+double start, stop, diff;
+
+void swap(int *x, int *y)//to swap the values in array
+{
+   int temp = *x;
+   *x = *y;
+   *y = temp;
+}
+
+void load(int array[], int n, string file)//loading files into the array
+{
+   ifstream inFile;
+   ofstream outFile;;
+   inFile.open(file);
+   if(inFile.fail())
+   {
+      cerr << "File input failed.." << endl;
+      exit(1);
+   }
+   for(int i=1; i<n; i++)
+   {
+      inFile >> array[i];
+   }
+   inFile.close();
+}
+
+//count 1 is if_cnt and count2 is m_cnt
+void sort1(int array[],int n)
+{
+   for(int i=0; i<n-1; i++)
+   {
+      for(int j=0; j<n-1; j++)
+      {
+         i_cnt++;
+         if (array[j] > array[j+1])
+         {
+            swap(array[j], array[j+1]);
+            m_cnt += 3;
+         }
+      }
+   }
+}
+
+void sort2(int array[], int n)
+{
+   for(int i=0; i<n-1; i++)
+   {
+      for(int j=0; j<n-i-1; j++)//different is on this its a i instead of a 1
+      {
+         i_cnt++;
+         if (array[j] > array[j+1])
+         {
+            swap(array[j], array[j+1]);
+            m_cnt += 3;
+         }
+      }
+   }
+}
+
+void merge(int x[], int left, int mid, int right)
+{
+   int T[MAX];
+   int l1 = left, r1 = mid, l2 = mid+1, r2 = right, n = left;
+
+   while(l1 <= r1 && l2 <= r2)
+   {
+      if(x[l1] < x[l2])
+      {
+         m_cnt++;
+         T[n++] = x[l1++];
+      }
+      else
+      {
+         m_cnt++;
+         T[n++] = x[l2++];
+      }
+   }
+   while(l1 <= r1)
+   {
+      m_cnt++;
+      T[n++] = x[l1++];
+   }
+   while(l2 <= r2)
+   {
+      m_cnt++;
+      T[n++] = x[l2++];
+   }
+   for(int i = left; i <= right; i++)
+   {
+      m_cnt++;
+      x[i] = T[i];
+   }
+}
+
+void mergesort(int array[], int l, int r)
+{
+   if (l >= r)
+      return;
+   int m;
+   if(l <r) 
+   {
+      m = (l + r)/2;
+      //sort first and second array
+      r_cnt++;
+      mergesort(array, l, m);
+      r_cnt++;
+      mergesort(array, m+1, r);
+      merge(array, l, m, r);
+   }
+}
+
+void output(int n, int val, long long int count, long long int mov, long double secs)
+{
+   if(val == 1 || val ==2)//the output for bubble sort
+   {
+      cout << "Results:" << endl;
+      cout << "n=" << n << ", ";
+      cout << "sort=" << val << ", ";
+      cout << "if frequency=" << count <<", ";
+      cout << "elements moved=" << mov << endl;
+      cout << "Time: " << fixed << setprecision(10) << secs << " seconds" << endl;
+   }
+   else//output from merge sort
+   {
+      cout << "Results:" << endl;
+      cout << "n=" << n << ", ";
+      cout << "sort=" << val <<", ";
+      cout << "recursive calls=" << count << ", ";
+      cout << "elements moved=" << mov << endl;
+      cout << "Time: " << fixed << setprecision(10) << secs << " seconds" << endl;
+   }
+}
+
+void outArray(int n, int x[])
+{
+   for(int i=0; i<n; i++)
+   {
+      cout << x[i] << ", ";
+   }
+   cout << endl;
+}
+
+int main()
+{
+   int n;
+   int x=0;
+   int x2=0;
+   int array[MAX];
+   string filename;
+   cout << "Please Input the file name: ";
+   cin >> filename;
+   cout << endl;
+
+   cout << "Enter the number of random numbers to process (sort)<= 100,000: ";
+   cin >> n;
+   cout << endl;  
+
+   load(array, n, filename);
+
+   
+
+   int val;//hold value to see which sort to use
+   cout << "Which sort do you want to analyze, 1 is bubble sort 1, 2 is bubble sort 2, and 3 is merge sort" << endl;
+   cin >> val;
+   while (x2 < 1)
+   {
+      if( val == 1)
+      {
+         gettimeofday(&startTime, NULL);
+         sort1(array, n);
+         gettimeofday(&stopTime, NULL);
+         x2++;
+         double start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         double stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+         double diff = stop - start;
+         output(n, val, i_cnt, m_cnt, diff);
+      }
+      else if(val == 2)
+      {
+         gettimeofday(&startTime, NULL);
+         sort2(array, n);
+         gettimeofday(&stopTime, NULL);
+         x2++;
+         double start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         double stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+         double diff = stop - start;
+         output(n, val, i_cnt, m_cnt, diff);
+      }
+      else if(val == 3)
+      {
+         gettimeofday(&startTime, NULL);
+         mergesort(array, 0, n-1);
+         gettimeofday(&stopTime, NULL);
+         x2++;
+         double start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         double stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+         double diff = stop - start;
+         output(n, val, r_cnt, m_cnt, diff);
+      }
+      else
+      {
+         cout << "Please enter 1,2,or 3: ";
+         cin >> val;
+      }
+   }//need to get the checks then add merge check
+
+   string prompt;
+
+   cout << "Output the sorted list (yes/no)? ";
+   cin >> prompt;
+   if(prompt == "yes")
+      outArray(n, array);
+
+}

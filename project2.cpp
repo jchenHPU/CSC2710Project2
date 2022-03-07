@@ -9,13 +9,12 @@ Things to work on
 1. get the counters for mergesort,heapsort, and quicksort
 2. get the times set for the sorts.
 3. fix selection sort.
-4. implement the right values into the array
 */
 
 #include<iostream>
 using namespace std;
-int p = 10; //temporary global
-
+int p = 10; //global to show first 10 val in array
+ 
 void swap(int *xp, int *yp) 
 { 
     int temp = *xp; 
@@ -40,14 +39,15 @@ void selectionSort(int arr[], int size, int cnt) //not working right now
    {
       imin = i;   //get index of minimum data
       for(j = i+1; j<size; j++)
-        cnt++;
          if(arr[j] < arr[imin])
+         {
+            cnt++;
             imin = j;
-         //placing in correct position
+         }//placing in correct position
          swap(arr[i], arr[imin]);
    }
     cout << "the array is now sorted" << endl;
-    cout << "this is the amount of compares used: " << cnt << endl;
+    cout << "this is the amount of swaps used: " << cnt << endl;
     displayArray(arr, p);
 }
 
@@ -57,10 +57,10 @@ void exchangeSort(int arr[], int n, int cnt)
    for(int i=0; i < n-1; i++)
    {
       for(int j=i+1; j < n; j++)
-      {
-        cnt++;  
+      { 
         if(arr[j] < arr[i])
         {
+            cnt++;
             temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;
@@ -68,7 +68,7 @@ void exchangeSort(int arr[], int n, int cnt)
       }
    }
     cout << "the array is now sorted" << endl;
-    cout << "this is the amount of compares used: " << cnt << endl;
+    cout << "this is the amount of swaps used: " << cnt << endl;
     displayArray(arr, p);
 }
 
@@ -244,7 +244,7 @@ int main()
     int array1[n]; // almost sorted
     int array2[n]; // randomly sorted
     int array3[n]; // revere sorted
-    //int array4[n]; // duplications
+    int array4[n]; // duplications
 
     for(int i=0; i< n; i++)//puting values in array1
     {
@@ -253,7 +253,7 @@ int main()
 
     for(int i=0; i<n; i++) //putting values in array2
     {
-        array2[i] = rand()%100;
+        array2[i] = rand()%1000;
     }
 
     int z= 0;
@@ -262,8 +262,12 @@ int main()
         array3[z] = i;
         z++;
     }
-
-    displayArray(array3, p);
+    
+    for(int i=0; i<n; i++) //putting values in array4
+    {
+        array4[i] = rand()%15;
+    }
+    
     int x;
     cout << "the sorting algorthims are:" << endl;
     cout << "1 for selection sort" << endl;
@@ -286,6 +290,8 @@ int main()
         selectionSort(array2, n, cnt);
         cout << "Reverse sorted array:" << endl;
         selectionSort(array3, n, cnt);
+        cout << "Duplicate sorted array:" << endl;
+        selectionSort(array4, n, cnt);
     }
     else if(x == 2)// exchange sort
     {
@@ -295,6 +301,8 @@ int main()
         exchangeSort(array2, n, cnt);
         cout << "Reverse sorted array:" << endl;
         exchangeSort(array3, n, cnt);
+        cout << "Duplicate sorted array:" << endl;
+        exchangeSort(array4, n, cnt);
     }
     else if(x == 3) // bubble sort
     {
@@ -304,6 +312,8 @@ int main()
         bubbleSort(array2, n, cnt);
         cout << "Reverse sorted array:" << endl;
         bubbleSort(array3, n, cnt);
+        cout << "Duplicate sorted array:" << endl;
+        bubbleSort(array4, n, cnt);
     }
     else if(x == 4) // insertion sort
     {
@@ -313,6 +323,8 @@ int main()
         insertionSort(array2, n, cnt);
         cout << "Reverse sorted array:" << endl;
         insertionSort(array3, n, cnt);
+        cout << "Duplicate sorted array:" << endl;
+        insertionSort(array4, n, cnt);
     }
     else if(x == 5) // mergesort
     {
@@ -322,6 +334,8 @@ int main()
         mergeSort(array2, 0, n-1);
         cout << "Reverse sorted array:" << endl;
         mergeSort(array3, 0, n-1);
+        cout << "Duplicate sorted array:" << endl;
+        mergeSort(array4, 0, n-1);
     }
     else if(x == 6) //quicksort
     {
@@ -331,6 +345,8 @@ int main()
         quickSort(array2, 0, n-1);
         cout << "Reverse sorted array:" << endl;
         quickSort(array3, 0, n-1);
+        cout << "Duplicate sorted array:" << endl;
+        quickSort(array4, 0, n-1);
     }
     else if(x == 7) //heapsort
     {
@@ -340,8 +356,9 @@ int main()
         heapSort(array2,n);
         cout << "Reverse sorted array:" << endl;
         heapSort(array3, n);
+        cout << "Duplicate sorted array:" << endl;
+        heapSort(array4, n);
     }
-    displayArray(array3, p); //temporary to check some sorts
     return 0;
 }
 
